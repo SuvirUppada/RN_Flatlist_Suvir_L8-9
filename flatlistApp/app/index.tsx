@@ -3,39 +3,26 @@ import {
   View,
   StyleSheet,
   FlatList,
-  TouchableOpacity,
 } from "react-native";
-import colors from "../styles/colors";
 import defaultStyles from "../styles/defaultStyles";
 import { useState } from "react";
+import ListItemSeparator from "@/components/ListItemSeparator";
+import ListItem from "@/components/ListItem";
+import { dataType } from "@/data/appData";
+import { DATA } from "@/data/appData";
 
 export default function Index() {
 
-  type dataType = {
-    id: string; // unique identifier for each element in list (student)
-    title: string; // what I display
-  }
 
-  const DATA: dataType[] = [
-    { id: "1", title: "First"},
-    {id:"2", title: "Second"},
-    {id: "3", title: 'Third'},
-    {id: "4", title: 'Fourth'},
-    {id: "5", title: 'Fifth'},
-  ];
+  const [selectedId, setSelectedId] = useState<string>("");
 
-  const [selectedId, setSelectedId] = useState<string>("")
+  //create a simple function to call when an item is selected
+  //pass a param of the item that was clicked on
 
-
-//create a simple function to call when an item is selected
-//pass a param of the item that was clicked on
-
-const selectedListItem = (item: dataType) => {
-  console.log("Click on " + item.title)
-  setSelectedId(item.id)
-}
-
-
+  const handleRowPress = (item: dataType) => {
+    console.log("Click on " + item.title);
+    setSelectedId(item.id);
+  };
 
   return (
     <View style={defaultStyles.container}>
@@ -45,19 +32,18 @@ const selectedListItem = (item: dataType) => {
       <View style={[defaultStyles.textContainer, { flex: 1 }]}>
         <View style={styles.flatlist}>
           <FlatList
-            data =  {DATA}
-            keyExtractor= {(item: dataType) => item.id}
-            extraData= {selectedId}
-            renderItem= {({ item }) => (
-              <TouchableOpacity onPress={() => selectedListItem(item)}>
-                <View style = {[styles.titleContainer, {backgroundColor:
-                  item.id === selectedId? colors.primary: colors.secondary, }
-                ]}> 
-                  <Text style={[styles.titleText, {color: 
-                  item.id === selectedId ? colors.text.light: colors.text.dark
-                  }]}>{item.title}</Text>
-                </View>
-              </TouchableOpacity>
+            data={DATA}
+            keyExtractor={(item: dataType) => item.id}
+            extraData={selectedId}
+            ItemSeparatorComponent={() => (
+              <ListItemSeparator color="lightblue" />
+            )}
+            renderItem={({ item }) => (
+              <ListItem
+                item={item}
+                isSelected={item.id === selectedId}
+                onPress={handleRowPress}
+              />
             )}
           />
         </View>
@@ -76,7 +62,7 @@ const styles = StyleSheet.create({
     width: 300,
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
-    backgroundColor: 'lightblue'
+    backgroundColor: "lightblue",
   },
   titleText: {
     fontSize: 24,
